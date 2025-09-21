@@ -1,6 +1,6 @@
 # Proyecto Final: Arquitectura de Microservicios
 
-Este proyecto es una demostración práctica de una arquitectura orientada a microservicios, desarrollada como parte del curso [Nombre de tu Curso o Asignatura]. La aplicación simula un sistema de e-commerce simple con gestión de usuarios, productos y pedidos.
+Este proyecto es una demostración práctica de una arquitectura orientada a microservicios, desarrollada como parte del curso LENGUAJE PROGRAMACION AVANZADO 2. La aplicación simula un sistema de e-commerce simple con gestión de usuarios, productos y pedidos.
 
 ## 🚀 Tecnologías Utilizadas
 
