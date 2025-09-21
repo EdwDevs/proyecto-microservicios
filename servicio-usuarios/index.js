@@ -1,7 +1,7 @@
 /**
  * Microservicio de Usuarios
- * Gestiona toda la lógica de negocio relacionada con los usuarios,
- * incluyendo el CRUD y la orquestación de llamadas a otros servicios.
+ * Gestiona el CRUD de usuarios y orquesta llamadas a otros servicios
+ * para componer vistas de datos completas.
  */
 
 // Dependencias
@@ -11,12 +11,12 @@ const cors = require('cors');
 
 // Configuración de la aplicación Express
 const app = express();
-app.use(cors()); // Habilita CORS para permitir peticiones del frontend
-app.use(express.json()); // Middleware para parsear el body de las peticiones a JSON
+app.use(cors());
+app.use(express.json());
 
 const PORT = 3000;
 
-// Simulación de base de datos en memoria.
+// Simulación de base de datos en memoria
 let usuarios = [
     { id: 1, nombreUsuario: "jperez", nombreCompleto: "Juan Pérez", email: "juan.perez@example.com", ciudad: "Bogotá" },
     { id: 2, nombreUsuario: "amartinez", nombreCompleto: "Ana Martinez", email: "ana.martinez@example.com", ciudad: "Medellín" }
@@ -43,7 +43,7 @@ app.get('/usuarios/:id', (req, res) => {
     }
 });
 
-// [GET] /usuarios/:id/perfil-completo - Orquesta datos del usuario y sus pedidos
+// [GET] /usuarios/:id/perfil-completo - Orquesta datos de usuario, pedidos y productos
 app.get('/usuarios/:id/perfil-completo', async (req, res) => {
     try {
         const userId = parseInt(req.params.id);
@@ -53,16 +53,35 @@ app.get('/usuarios/:id/perfil-completo', async (req, res) => {
             return res.status(404).send('Usuario no encontrado');
         }
 
+        // 1. Obtener los pedidos del usuario desde el Servicio de Pedidos
         const respuestaPedidos = await axios.get(`http://localhost:3001/usuarios/${userId}/pedidos`);
-        
+        const pedidos = respuestaPedidos.data;
+
+        // 2. Para cada pedido, obtener la información completa del producto
+        // Se utiliza Promise.all para ejecutar las llamadas a la API de productos en paralelo
+        const pedidosConDetallesDeProducto = await Promise.all(
+            pedidos.map(async (pedido) => {
+                // Llamada al Servicio de Productos
+                const respuestaProducto = await axios.get(`http://localhost:3002/productos/${pedido.productoId}`);
+                
+                // Combinar la información del pedido con la del producto
+                return {
+                    ...pedido,
+                    producto: respuestaProducto.data // Anidar el objeto del producto
+                };
+            })
+        );
+
+        // 3. Construir la respuesta final
         const perfilCompleto = {
             ...usuario,
-            pedidos: respuestaPedidos.data
+            pedidos: pedidosConDetallesDeProducto
         };
 
         res.json(perfilCompleto);
+
     } catch (error) {
-        console.error("Error al comunicar con el servicio de pedidos:", error.message);
+        console.error("Error al orquestar el perfil completo:", error.message);
         res.status(500).send('Error al obtener el perfil completo del usuario');
     }
 });
@@ -90,7 +109,6 @@ app.put('/usuarios/:id', (req, res) => {
     const userIndex = usuarios.findIndex(u => u.id === userId);
 
     if (userIndex > -1) {
-        // Combina los datos antiguos con los nuevos
         const usuarioActualizado = { ...usuarios[userIndex], ...req.body };
         usuarios[userIndex] = usuarioActualizado;
         
