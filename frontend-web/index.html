@@ -184,17 +184,15 @@
             PEDIDOS: 'http://localhost:3001/pedidos',
             PRODUCTOS: 'http://localhost:3002/productos'
         };
-        let productCache = []; // Caché simple para no pedir los productos a cada rato
+        let productCache = [];
         let adminIsEditingUser = false;
         let adminIsEditingProduct = false;
 
         // --- Inicialización ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Vista principal
             loadUserOptions();
             document.getElementById('user-select').addEventListener('change', (e) => loadUserProfile(e.target.value));
             
-            // Modal de Administración
             document.getElementById('open-admin-modal-btn').addEventListener('click', openAdminModal);
             document.getElementById('close-admin-modal-btn').addEventListener('click', closeAdminModal);
             document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', switchTab));
@@ -203,7 +201,6 @@
             document.getElementById('admin-product-form').addEventListener('submit', handleAdminProductFormSubmit);
             document.getElementById('cancel-product-edit').addEventListener('click', exitAdminProductEditMode);
 
-            // Modal de Añadir Pedido
             document.getElementById('open-add-order-modal-btn').addEventListener('click', openAddOrderModal);
             document.getElementById('close-add-order-modal-btn').addEventListener('click', closeAddOrderModal);
             document.getElementById('add-order-form').addEventListener('submit', handleAddOrderSubmit);
@@ -212,47 +209,24 @@
         });
 
         // --- Lógica de la Vista Principal ---
-        async function loadUserOptions() { /* ... */ }
-        async function loadUserProfile(userId) { /* ... */ }
-        function renderProfile(user) { /* ... */ }
-        function renderOrders(pedidos) { /* ... */ }
-
-        // --- Lógica del Modal de Administración ---
-        function openAdminModal() { /* ... */ }
-        function closeAdminModal() { /* ... */ }
-        function switchTab(event) { /* ... */ }
-        
-        // CRUD de Usuarios en Modal
-        async function loadAdminUserList() { /* ... */ }
-        function assignAdminUserActionButtons() { /* ... */ }
-        async function handleAdminUserFormSubmit(event) { /* ... */ }
-        async function deleteUser(userId) { /* ... */ }
-        async function enterAdminUserEditMode(userId) { /* ... */ }
-        function exitAdminUserEditMode() { /* ... */ }
-
-        // CRUD de Productos en Modal
-        async function loadAdminProductList() { /* ... */ }
-        function assignAdminProductActionButtons() { /* ... */ }
-        async function handleAdminProductFormSubmit(event) { /* ... */ }
-        async function deleteProduct(productId) { /* ... */ }
-        async function enterAdminProductEditMode(productId) { /* ... */ }
-        function exitAdminProductEditMode() { /* ... */ }
-
-        // --- Lógica del Modal de Añadir Pedido ---
-        async function openAddOrderModal() { /* ... */ }
-        function closeAddOrderModal() { /* ... */ }
-        async function handleAddOrderSubmit(event) { /* ... */ }
-        async function deleteOrder(orderId) { /* ... */ }
-        function updateCalculatedPrice() { /* ... */ }
-
-        // --- Implementaciones de Funciones ---
-
         async function loadUserOptions() {
             try {
                 const users = await (await fetch(API.USERS)).json();
                 const userSelect = document.getElementById('user-select');
+                const currentUser = userSelect.value;
                 userSelect.innerHTML = users.map(user => `<option value="${user.id}">${user.nombreCompleto}</option>`).join('');
-                if (users.length > 0) loadUserProfile(users[0].id);
+                
+                // Mantener la selección actual si el usuario todavía existe
+                const userExists = users.some(u => u.id == currentUser);
+                if (currentUser && userExists) {
+                    userSelect.value = currentUser;
+                } else if (users.length > 0) {
+                    loadUserProfile(users[0].id);
+                } else {
+                    // Limpiar la vista si no hay usuarios
+                    document.getElementById('profile-details').innerHTML = `<div class="empty-state">No hay usuarios.</div>`;
+                    document.getElementById('orders-grid').innerHTML = ``;
+                }
             } catch (e) { console.error("Error cargando opciones de usuario:", e); }
         }
 
@@ -297,6 +271,7 @@
             }));
         }
 
+        // --- Lógica del Modal de Administración ---
         function openAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); loadAdminUserList(); }
         function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); exitAdminUserEditMode(); exitAdminProductEditMode(); }
 
@@ -308,7 +283,7 @@
             document.getElementById(`${tab}-tab`).classList.add('active');
             if (tab === 'products') loadAdminProductList();
         }
-
+        
         async function loadAdminUserList() {
             const listEl = document.getElementById('admin-user-list');
             listEl.innerHTML = `<div class="loading-state">Cargando...</div>`;
@@ -340,21 +315,28 @@
                 email: document.getElementById('admin-email').value,
                 ciudad: document.getElementById('admin-ciudad').value
             };
-            const method = adminIsEditingUser ? 'PUT' : 'POST';
-            const url = adminIsEditingUser ? `${API.USERS}/${document.getElementById('admin-userId').value}` : API.USERS;
+            const isUpdating = adminIsEditingUser;
+            const method = isUpdating ? 'PUT' : 'POST';
+            const url = isUpdating ? `${API.USERS}/${document.getElementById('admin-userId').value}` : API.USERS;
             try {
-                await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(userData) });
+                const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(userData) });
+                const savedUser = await response.json();
                 exitAdminUserEditMode();
-                loadAdminUserList();
-                loadUserOptions();
+                await loadAdminUserList();
+                await loadUserOptions();
+                if (!isUpdating) {
+                    const userSelect = document.getElementById('user-select');
+                    userSelect.value = savedUser.id;
+                    loadUserProfile(savedUser.id);
+                }
             } catch (e) { console.error('Error en formulario de usuario:', e); }
         }
 
         async function deleteUser(userId) {
             try {
                 await fetch(`${API.USERS}/${userId}`, { method: 'DELETE' });
-                loadAdminUserList();
-                loadUserOptions();
+                await loadAdminUserList();
+                await loadUserOptions();
             } catch (e) { console.error('Error al eliminar usuario:', e); }
         }
 
@@ -390,8 +372,9 @@
             listEl.innerHTML = `<div class="loading-state">Cargando...</div>`;
             try {
                 const products = await (await fetch(API.PRODUCTOS)).json();
+                productCache = products;
                 listEl.innerHTML = products.map(p => `<div class="admin-item">
-                    <span>${p.nombre} ($${p.precio})</span>
+                    <span>${p.nombre} ($${p.precio.toFixed(2)})</span>
                     <div class="admin-item-actions">
                         <button class="btn btn-edit" data-id="${p.id}">Editar</button>
                         <button class="btn btn-delete" data-id="${p.id}">Eliminar</button>
@@ -463,9 +446,9 @@
             document.getElementById('add-order-modal').classList.remove('hidden');
             try {
                 const products = await (await fetch(API.PRODUCTOS)).json();
-                productCache = products; // Guardar en caché
+                productCache = products;
                 document.getElementById('product-select').innerHTML = products.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
-                updateCalculatedPrice(); // Calcular precio inicial
+                updateCalculatedPrice();
             } catch (e) { console.error("Error al cargar productos para el pedido:", e); }
         }
 
@@ -473,10 +456,15 @@
 
         async function handleAddOrderSubmit(event) {
             event.preventDefault();
+            const selectedProductId = parseInt(document.getElementById('product-select').value);
+            const quantity = parseInt(document.getElementById('order-quantity').value);
+            const product = productCache.find(p => p.id === selectedProductId);
+
             const newOrderData = {
                 usuarioId: parseInt(document.getElementById('user-select').value),
-                productoId: parseInt(document.getElementById('product-select').value),
-                cantidad: parseInt(document.getElementById('order-quantity').value)
+                productoId: selectedProductId,
+                cantidad: quantity,
+            
             };
             try {
                 await fetch(API.PEDIDOS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newOrderData) });

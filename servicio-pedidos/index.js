@@ -6,7 +6,7 @@
 
 const express = require('express');
 const cors = require('cors');
-const axios = require('axios'); // <-- Añadido para hacer llamadas HTTP
+const axios = require('axios');
 
 const app = express();
 app.use(cors());
@@ -27,10 +27,16 @@ app.get('/usuarios/:id/pedidos', (req, res) => {
     res.json(pedidosUsuario);
 });
 
-// [POST] /pedidos - Crea un nuevo pedido 
+// [POST] /pedidos - Crea un nuevo pedido
 app.post('/pedidos', async (req, res) => {
     try {
+        // Obtenemos solo los datos que el cliente DEBE enviar
         const { usuarioId, productoId, cantidad } = req.body;
+
+        // Verificamos que los datos necesarios llegaron
+        if (!usuarioId || !productoId || !cantidad) {
+            return res.status(400).send('Faltan datos requeridos: usuarioId, productoId, cantidad.');
+        }
 
         // 1. Obtener el precio del producto desde el Servicio de Productos
         const respuestaProducto = await axios.get(`http://localhost:3002/productos/${productoId}`);
@@ -46,7 +52,7 @@ app.post('/pedidos', async (req, res) => {
             usuarioId: parseInt(usuarioId),
             productoId: parseInt(productoId),
             cantidad: parseInt(cantidad),
-            precioTotal: parseFloat(precioTotal.toFixed(2)), // Redondear a 2 decimales
+            precioTotal: parseFloat(precioTotal.toFixed(2)),
             fechaCompra: new Date().toISOString().split('T')[0]
         };
 
