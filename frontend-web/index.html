@@ -7,354 +7,74 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #111827;
-            --bg-secondary: #1F2937;
-            --bg-card: #374151;
-            --text-primary: #F9FAFB;
-            --text-secondary: #9CA3AF;
-            --accent: #3B82F6;
-            --accent-hover: #2563EB;
-            --danger: #e53e3e;
-            --danger-hover: #c53030;
-            --warning: #f59e0b;
-            --warning-hover: #d97706;
-            --secondary-action: #6b7280;
-            --secondary-action-hover: #4b5563;
-            --border-color: #4B5563;
-            --border-radius: 0.5rem;
+            --bg-primary: #111827; --bg-secondary: #1F2937; --bg-card: #374151;
+            --text-primary: #F9FAFB; --text-secondary: #9CA3AF;
+            --accent: #3B82F6; --accent-hover: #2563EB; --danger: #e53e3e;
+            --danger-hover: #c53030; --warning: #f59e0b; --warning-hover: #d97706;
+            --secondary-action: #6b7280; --secondary-action-hover: #4b5563;
+            --border-color: #4B5563; --border-radius: 0.5rem;
             --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-        }
-
-        /* --- Barra de Navegación --- */
-        .navbar {
-            background-color: var(--bg-secondary);
-            padding: 1rem 2rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow);
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-        }
-
-        .user-selector label {
-            margin-right: 0.5rem;
-            color: var(--text-secondary);
-        }
-
-        .user-selector select {
-            background-color: var(--bg-card);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 0.5rem;
-            font-size: 1rem;
-        }
-
-        /* --- Contenido Principal --- */
-        .main-container {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .profile-section, .orders-section {
-            margin-bottom: 3rem;
-        }
-
-        h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1rem;
-        }
-
-        /* --- Tarjeta de Perfil --- */
-        .profile-card {
-            background-color: var(--bg-secondary);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-
-        .profile-field strong {
-            color: var(--text-secondary);
-            display: block;
-            font-weight: 500;
-        }
-
-        /* --- Cuadrícula de Pedidos --- */
-        .orders-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .order-card {
-            background-color: var(--bg-secondary);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.2s ease-in-out;
-            position: relative; /* Para posicionar el botón de eliminar */
-        }
-
-        .order-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .order-image {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-
-        .order-details {
-            padding: 1rem;
-        }
-
-        .order-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .order-info {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .order-price {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin-top: 1rem;
-        }
-        
-        .btn-delete-order {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background-color: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            cursor: pointer;
-            font-size: 1rem;
-            line-height: 28px;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            z-index: 10;
-        }
-
-        .order-card:hover .btn-delete-order {
-            opacity: 1;
-        }
-
-        /* --- Estados --- */
-        .loading-state, .empty-state {
-            text-align: center;
-            color: var(--text-secondary);
-            padding: 3rem;
-            background-color: var(--bg-secondary);
-            border-radius: var(--border-radius);
-        }
-        
-        /* --- Estilos del Modal --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-content {
-            background-color: var(--bg-secondary);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            width: 90%;
-            max-width: 900px;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 2rem;
-            cursor: pointer;
-            line-height: 1;
-        }
-
-        .modal-body {
-            display: flex;
-            gap: 2rem;
-            overflow-y: auto;
-        }
-        
-        .hidden {
-            display: none;
-        }
-
-        /* --- Estilos del Modal de Administración --- */
-        .admin-user-list-container {
-            flex: 2;
-            min-width: 300px;
-        }
-
-        .admin-form-container {
-            flex: 1.5;
-            padding-left: 2rem;
-            border-left: 1px solid var(--border-color);
-        }
-
-        .admin-user-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            border-radius: var(--border-radius);
-            margin-bottom: 0.5rem;
-            background-color: var(--bg-card);
-        }
-
-        .admin-user-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .admin-user-actions .btn {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.8rem;
-            width: auto;
-        }
-
-        #admin-user-form {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        #admin-user-form input {
-            padding: 0.6rem;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-size: 1rem;
-        }
-
-        /* --- Estilos del Modal de Añadir Pedido --- */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
-        }
-        .form-group select,
-        .form-group input {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-size: 1rem;
-        }
-
-        /* --- Estilos Generales de Botones --- */
-        .btn {
-            background-color: var(--accent);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            font-weight: 500;
-        }
-        .btn:hover {
-            background-color: var(--accent-hover);
-        }
-        .btn.btn-secondary {
-            background-color: var(--bg-card);
-            width: auto;
-            margin-left: 1rem;
-        }
-        .btn.btn-secondary:hover {
-            background-color: var(--border-color);
-        }
-        .btn-delete {
-            background-color: var(--danger);
-        }
-        .btn-delete:hover {
-            background-color: var(--danger-hover);
-        }
-        .btn-edit {
-            background-color: var(--warning);
-        }
-        .btn-edit:hover {
-            background-color: var(--warning-hover);
-        }
-        .btn-cancel-edit {
-            background-color: var(--secondary-action);
-        }
-        .btn-cancel-edit:hover {
-            background-color: var(--secondary-action-hover);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-primary); }
+        .navbar { background-color: var(--bg-secondary); padding: 1rem 2rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); }
+        .logo { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; }
+        .user-selector label { margin-right: 0.5rem; color: var(--text-secondary); }
+        .user-selector select { background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 0.5rem; font-size: 1rem; }
+        .main-container { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+        .profile-section, .orders-section { margin-bottom: 3rem; }
+        h1 { font-size: 2rem; font-weight: 600; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+        .profile-card { background-color: var(--bg-secondary); border-radius: var(--border-radius); padding: 1.5rem; box-shadow: var(--shadow); display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .profile-field strong { color: var(--text-secondary); display: block; font-weight: 500; }
+        .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .order-card { background-color: var(--bg-secondary); border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow); transition: transform 0.2s ease-in-out; position: relative; }
+        .order-card:hover { transform: translateY(-5px); }
+        .order-image { width: 100%; height: 180px; object-fit: cover; }
+        .order-details { padding: 1rem; }
+        .order-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .order-info { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.25rem; }
+        .order-price { font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-top: 1rem; }
+        .btn-delete-order { position: absolute; top: 0.5rem; right: 0.5rem; background-color: var(--danger); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: 1rem; line-height: 28px; text-align: center; opacity: 0; transition: opacity 0.2s ease; z-index: 10; }
+        .order-card:hover .btn-delete-order { opacity: 1; }
+        .loading-state, .empty-state { text-align: center; color: var(--text-secondary); padding: 3rem; background-color: var(--bg-secondary); border-radius: var(--border-radius); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; transition: opacity 0.3s ease; }
+        .modal-content { background-color: var(--bg-secondary); padding: 2rem; border-radius: var(--border-radius); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); width: 90%; max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem; }
+        .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 2rem; cursor: pointer; line-height: 1; }
+        .modal-body { display: flex; gap: 2rem; overflow-y: auto; }
+        .hidden { display: none; }
+        .admin-list-container { flex: 2; min-width: 300px; }
+        .admin-form-container { flex: 1.5; padding-left: 2rem; border-left: 1px solid var(--border-color); }
+        .admin-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-radius: var(--border-radius); margin-bottom: 0.5rem; background-color: var(--bg-card); }
+        .admin-item-actions { display: flex; gap: 0.5rem; }
+        .admin-item-actions .btn { padding: 0.25rem 0.5rem; font-size: 0.8rem; width: auto; }
+        .admin-form { display: flex; flex-direction: column; gap: 0.75rem; }
+        .admin-form input { padding: 0.6rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); background-color: var(--bg-primary); color: var(--text-primary); font-size: 1rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-secondary); }
+        .form-group select, .form-group input { width: 100%; padding: 0.75rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); background-color: var(--bg-primary); color: var(--text-primary); font-size: 1rem; }
+        .btn { background-color: var(--accent); color: white; border: none; border-radius: var(--border-radius); padding: 0.5rem 1rem; cursor: pointer; transition: background-color 0.2s ease; font-weight: 500; }
+        .btn:hover { background-color: var(--accent-hover); }
+        .btn.btn-secondary { background-color: var(--bg-card); width: auto; margin-left: 1rem; }
+        .btn.btn-secondary:hover { background-color: var(--border-color); }
+        .btn-delete { background-color: var(--danger); }
+        .btn-delete:hover { background-color: var(--danger-hover); }
+        .btn-edit { background-color: var(--warning); }
+        .btn-edit:hover { background-color: var(--warning-hover); }
+        .btn-cancel-edit { background-color: var(--secondary-action); }
+        .btn-cancel-edit:hover { background-color: var(--secondary-action-hover); }
+        .tabs { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem; }
+        .tab-btn { background: none; border: none; color: var(--text-secondary); padding: 0.75rem 1rem; cursor: pointer; font-size: 1rem; border-bottom: 2px solid transparent; }
+        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="logo">
             <span>MiTienda</span>
-            <button id="open-admin-modal-btn" class="btn btn-secondary">Gestionar Usuarios</button>
+            <button id="open-admin-modal-btn" class="btn btn-secondary">Gestionar Tienda</button>
         </div>
         <div class="user-selector">
             <label for="user-select">Seleccionar Usuario:</label>
@@ -367,7 +87,6 @@
             <h1>Perfil de Usuario</h1>
             <div id="profile-details"></div>
         </section>
-
         <section class="orders-section">
             <h1 style="display: flex; justify-content: space-between; align-items: center;">
                 <span>Historial de Compras</span>
@@ -377,29 +96,55 @@
         </section>
     </main>
 
-    <!-- Modal de Gestión de Usuarios -->
+    <!-- Modal de Administración -->
     <div id="admin-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Gestión de Usuarios</h2>
+                <h2>Gestión de la Tienda</h2>
                 <button id="close-admin-modal-btn" class="close-btn">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="admin-user-list-container">
-                    <h3>Usuarios Existentes</h3>
-                    <div id="admin-user-list"></div>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="users">Usuarios</button>
+                <button class="tab-btn" data-tab="products">Productos</button>
+            </div>
+            <div id="users-tab" class="tab-content active">
+                <div class="modal-body">
+                    <div class="admin-list-container">
+                        <h3>Usuarios Existentes</h3>
+                        <div id="admin-user-list"></div>
+                    </div>
+                    <div class="admin-form-container">
+                        <h3 id="admin-user-form-title">Crear Nuevo Usuario</h3>
+                        <form id="admin-user-form" class="admin-form">
+                            <input type="hidden" id="admin-userId">
+                            <input type="text" id="admin-nombreUsuario" placeholder="Nombre de usuario" required>
+                            <input type="text" id="admin-nombreCompleto" placeholder="Nombre Completo" required>
+                            <input type="email" id="admin-email" placeholder="Email" required>
+                            <input type="text" id="admin-ciudad" placeholder="Ciudad" required>
+                            <button type="submit" class="btn">Crear Usuario</button>
+                            <button type="button" class="btn btn-cancel-edit" id="cancel-user-edit" style="display: none;">Cancelar</button>
+                        </form>
+                    </div>
                 </div>
-                <div class="admin-form-container">
-                    <h3 id="admin-form-title">Crear Nuevo Usuario</h3>
-                    <form id="admin-user-form">
-                        <input type="hidden" id="admin-userId">
-                        <input type="text" id="admin-nombreUsuario" placeholder="Nombre de usuario" required>
-                        <input type="text" id="admin-nombreCompleto" placeholder="Nombre Completo" required>
-                        <input type="email" id="admin-email" placeholder="Email" required>
-                        <input type="text" id="admin-ciudad" placeholder="Ciudad" required>
-                        <button type="submit" class="btn">Crear Usuario</button>
-                        <button type="button" class="btn btn-cancel-edit" style="display: none;">Cancelar Edición</button>
-                    </form>
+            </div>
+            <div id="products-tab" class="tab-content">
+                <div class="modal-body">
+                    <div class="admin-list-container">
+                        <h3>Productos Existentes</h3>
+                        <div id="admin-product-list"></div>
+                    </div>
+                    <div class="admin-form-container">
+                        <h3 id="admin-product-form-title">Crear Nuevo Producto</h3>
+                        <form id="admin-product-form" class="admin-form">
+                            <input type="hidden" id="admin-productId">
+                            <input type="text" id="admin-nombreProducto" placeholder="Nombre del Producto" required>
+                            <input type="text" id="admin-descripcion" placeholder="Descripción" required>
+                            <input type="number" id="admin-precio" step="0.01" placeholder="Precio" required>
+                            <input type="url" id="admin-imageUrl" placeholder="URL de la Imagen" required>
+                            <button type="submit" class="btn">Crear Producto</button>
+                            <button type="button" class="btn btn-cancel-edit" id="cancel-product-edit" style="display: none;">Cancelar</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -423,8 +168,8 @@
                         <input type="number" id="order-quantity" value="1" min="1" required>
                     </div>
                     <div class="form-group">
-                        <label for="order-price">Precio Total:</label>
-                        <input type="number" id="order-price" step="0.01" placeholder="Ej: 1250.99" required>
+                        <label>Precio Total Calculado:</label>
+                        <span id="calculated-price" style="font-size: 1.2rem; font-weight: bold;">$0.00</span>
                     </div>
                     <button type="submit" class="btn">Guardar Compra</button>
                 </form>
@@ -433,273 +178,329 @@
     </div>
 
     <script>
-    /**
-     * Script principal para la interfaz de usuario.
-     * Maneja la vista de perfil de cliente y los modales de administración.
-     */
+        // --- Constantes y Referencias al DOM ---
+        const API = {
+            USERS: 'http://localhost:3000/usuarios',
+            PEDIDOS: 'http://localhost:3001/pedidos',
+            PRODUCTOS: 'http://localhost:3002/productos'
+        };
+        let productCache = []; // Caché simple para no pedir los productos a cada rato
+        let adminIsEditingUser = false;
+        let adminIsEditingProduct = false;
 
-    // --- Constantes y Referencias al DOM ---
-    const USERS_API = 'http://localhost:3000/usuarios';
-    const PEDIDOS_API = 'http://localhost:3001/pedidos';
-    const PRODUCTOS_API = 'http://localhost:3002/productos';
+        // --- Inicialización ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Vista principal
+            loadUserOptions();
+            document.getElementById('user-select').addEventListener('change', (e) => loadUserProfile(e.target.value));
+            
+            // Modal de Administración
+            document.getElementById('open-admin-modal-btn').addEventListener('click', openAdminModal);
+            document.getElementById('close-admin-modal-btn').addEventListener('click', closeAdminModal);
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', switchTab));
+            document.getElementById('admin-user-form').addEventListener('submit', handleAdminUserFormSubmit);
+            document.getElementById('cancel-user-edit').addEventListener('click', exitAdminUserEditMode);
+            document.getElementById('admin-product-form').addEventListener('submit', handleAdminProductFormSubmit);
+            document.getElementById('cancel-product-edit').addEventListener('click', exitAdminProductEditMode);
 
-    // Elementos de la vista principal
-    const userSelect = document.getElementById('user-select');
-    const profileDetails = document.getElementById('profile-details');
-    const ordersGrid = document.getElementById('orders-grid');
+            // Modal de Añadir Pedido
+            document.getElementById('open-add-order-modal-btn').addEventListener('click', openAddOrderModal);
+            document.getElementById('close-add-order-modal-btn').addEventListener('click', closeAddOrderModal);
+            document.getElementById('add-order-form').addEventListener('submit', handleAddOrderSubmit);
+            document.getElementById('product-select').addEventListener('change', updateCalculatedPrice);
+            document.getElementById('order-quantity').addEventListener('input', updateCalculatedPrice);
+        });
 
-    // Elementos del modal de administración de usuarios
-    const adminModal = document.getElementById('admin-modal');
-    const adminUserList = document.getElementById('admin-user-list');
-    const adminUserForm = document.getElementById('admin-user-form');
-    const adminFormTitle = document.getElementById('admin-form-title');
-    let adminIsEditing = false;
+        // --- Lógica de la Vista Principal ---
+        async function loadUserOptions() { /* ... */ }
+        async function loadUserProfile(userId) { /* ... */ }
+        function renderProfile(user) { /* ... */ }
+        function renderOrders(pedidos) { /* ... */ }
 
-    // Elementos del modal de añadir pedido
-    const addOrderModal = document.getElementById('add-order-modal');
-    const addOrderForm = document.getElementById('add-order-form');
-    const productSelect = document.getElementById('product-select');
+        // --- Lógica del Modal de Administración ---
+        function openAdminModal() { /* ... */ }
+        function closeAdminModal() { /* ... */ }
+        function switchTab(event) { /* ... */ }
+        
+        // CRUD de Usuarios en Modal
+        async function loadAdminUserList() { /* ... */ }
+        function assignAdminUserActionButtons() { /* ... */ }
+        async function handleAdminUserFormSubmit(event) { /* ... */ }
+        async function deleteUser(userId) { /* ... */ }
+        async function enterAdminUserEditMode(userId) { /* ... */ }
+        function exitAdminUserEditMode() { /* ... */ }
 
-    /**
-     * Punto de entrada: asigna los eventos iniciales al cargar el DOM.
-     */
-    document.addEventListener('DOMContentLoaded', () => {
-        // Eventos de la vista principal
-        loadUserOptions();
-        userSelect.addEventListener('change', (e) => loadUserProfile(e.target.value));
+        // CRUD de Productos en Modal
+        async function loadAdminProductList() { /* ... */ }
+        function assignAdminProductActionButtons() { /* ... */ }
+        async function handleAdminProductFormSubmit(event) { /* ... */ }
+        async function deleteProduct(productId) { /* ... */ }
+        async function enterAdminProductEditMode(productId) { /* ... */ }
+        function exitAdminProductEditMode() { /* ... */ }
 
-        // Eventos para el modal de administración de usuarios
-        document.getElementById('open-admin-modal-btn').addEventListener('click', openAdminModal);
-        document.getElementById('close-admin-modal-btn').addEventListener('click', closeAdminModal);
-        adminUserForm.addEventListener('submit', handleAdminFormSubmit);
-        adminModal.querySelector('.btn-cancel-edit').addEventListener('click', exitAdminEditMode);
+        // --- Lógica del Modal de Añadir Pedido ---
+        async function openAddOrderModal() { /* ... */ }
+        function closeAddOrderModal() { /* ... */ }
+        async function handleAddOrderSubmit(event) { /* ... */ }
+        async function deleteOrder(orderId) { /* ... */ }
+        function updateCalculatedPrice() { /* ... */ }
 
-        // Eventos para el modal de añadir pedido
-        document.getElementById('open-add-order-modal-btn').addEventListener('click', openAddOrderModal);
-        document.getElementById('close-add-order-modal-btn').addEventListener('click', closeAddOrderModal);
-        addOrderForm.addEventListener('submit', handleAddOrderSubmit);
-    });
+        // --- Implementaciones de Funciones ---
 
-    // --- Lógica de la Vista Principal (Cliente) ---
-
-    async function loadUserOptions() {
-        try {
-            const users = await (await fetch(USERS_API)).json();
-            userSelect.innerHTML = users.map(user => `<option value="${user.id}">${user.nombreCompleto}</option>`).join('');
-            if (users.length > 0) {
-                loadUserProfile(users[0].id);
-            }
-        } catch (error) {
-            console.error("Error al cargar opciones de usuario:", error);
+        async function loadUserOptions() {
+            try {
+                const users = await (await fetch(API.USERS)).json();
+                const userSelect = document.getElementById('user-select');
+                userSelect.innerHTML = users.map(user => `<option value="${user.id}">${user.nombreCompleto}</option>`).join('');
+                if (users.length > 0) loadUserProfile(users[0].id);
+            } catch (e) { console.error("Error cargando opciones de usuario:", e); }
         }
-    }
 
-    async function loadUserProfile(userId) {
-        if (!userId) return;
-        profileDetails.innerHTML = `<div class="loading-state">Cargando perfil...</div>`;
-        ordersGrid.innerHTML = `<div class="loading-state">Cargando historial...</div>`;
-        try {
-            const userProfile = await (await fetch(`${USERS_API}/${userId}/perfil-completo`)).json();
-            renderProfile(userProfile);
-            renderOrders(userProfile.pedidos);
-        } catch (error) {
-            console.error("Error al cargar perfil completo:", error);
+        async function loadUserProfile(userId) {
+            if (!userId) return;
+            document.getElementById('profile-details').innerHTML = `<div class="loading-state">Cargando perfil...</div>`;
+            document.getElementById('orders-grid').innerHTML = `<div class="loading-state">Cargando historial...</div>`;
+            try {
+                const userProfile = await (await fetch(`${API.USERS}/${userId}/perfil-completo`)).json();
+                renderProfile(userProfile);
+                renderOrders(userProfile.pedidos);
+            } catch (e) { console.error("Error cargando perfil:", e); }
         }
-    }
 
-    function renderProfile(user) {
-        profileDetails.innerHTML = `
-            <div class="profile-card">
+        function renderProfile(user) {
+            document.getElementById('profile-details').innerHTML = `<div class="profile-card">
                 <div class="profile-field"><strong>Usuario:</strong><span>${user.nombreUsuario}</span></div>
                 <div class="profile-field"><strong>Nombre:</strong><span>${user.nombreCompleto}</span></div>
                 <div class="profile-field"><strong>Email:</strong><span>${user.email}</span></div>
                 <div class="profile-field"><strong>Ciudad:</strong><span>${user.ciudad}</span></div>
             </div>`;
-    }
-
-    function renderOrders(pedidos) {
-        if (!pedidos || pedidos.length === 0) {
-            ordersGrid.innerHTML = `<div class="empty-state">Este usuario no tiene compras registradas.</div>`;
-            return;
         }
-        ordersGrid.innerHTML = pedidos.map(pedido => `
-            <div class="order-card">
-                <button class="btn-delete-order" data-order-id="${pedido.id}" title="Eliminar compra">&times;</button>
-                <img src="${pedido.producto.imageUrl}" alt="${pedido.producto.nombre}" class="order-image">
+
+        function renderOrders(pedidos) {
+            const ordersGrid = document.getElementById('orders-grid');
+            if (!pedidos || pedidos.length === 0) {
+                ordersGrid.innerHTML = `<div class="empty-state">Este usuario no tiene compras.</div>`;
+                return;
+            }
+            ordersGrid.innerHTML = pedidos.map(p => `<div class="order-card">
+                <button class="btn-delete-order" data-order-id="${p.id}" title="Eliminar compra">&times;</button>
+                <img src="${p.producto.imageUrl}" alt="${p.producto.nombre}" class="order-image">
                 <div class="order-details">
-                    <h3 class="order-title">${pedido.producto.nombre}</h3>
-                    <p class="order-info">Pedido #${pedido.id}</p>
-                    <p class="order-info">Fecha: ${new Date(pedido.fechaCompra).toLocaleDateString()}</p>
-                    <p class="order-price">$${pedido.precioTotal.toFixed(2)}</p>
+                    <h3 class="order-title">${p.producto.nombre}</h3>
+                    <p class="order-info">Pedido #${p.id}</p>
+                    <p class="order-info">Fecha: ${new Date(p.fechaCompra).toLocaleDateString()}</p>
+                    <p class="order-price">$${p.precioTotal.toFixed(2)}</p>
                 </div>
             </div>`).join('');
-        
-        // Asignar evento a los nuevos botones de eliminar pedido
-        ordersGrid.querySelectorAll('.btn-delete-order').forEach(b => b.addEventListener('click', e => {
-            if (confirm(`¿Seguro que quieres eliminar el pedido con ID ${e.target.dataset.orderId}?`)) {
-                deleteOrder(e.target.dataset.orderId);
+            ordersGrid.querySelectorAll('.btn-delete-order').forEach(b => b.addEventListener('click', e => {
+                if (confirm(`¿Eliminar pedido #${e.target.dataset.orderId}?`)) deleteOrder(e.target.dataset.orderId);
+            }));
+        }
+
+        function openAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); loadAdminUserList(); }
+        function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); exitAdminUserEditMode(); exitAdminProductEditMode(); }
+
+        function switchTab(event) {
+            const tab = event.target.dataset.tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tab}-tab`).classList.add('active');
+            if (tab === 'products') loadAdminProductList();
+        }
+
+        async function loadAdminUserList() {
+            const listEl = document.getElementById('admin-user-list');
+            listEl.innerHTML = `<div class="loading-state">Cargando...</div>`;
+            try {
+                const users = await (await fetch(API.USERS)).json();
+                listEl.innerHTML = users.map(u => `<div class="admin-item">
+                    <span>${u.nombreCompleto}</span>
+                    <div class="admin-item-actions">
+                        <button class="btn btn-edit" data-id="${u.id}">Editar</button>
+                        <button class="btn btn-delete" data-id="${u.id}">Eliminar</button>
+                    </div>
+                </div>`).join('');
+                assignAdminUserActionButtons();
+            } catch (e) { console.error('Error cargando lista de admin:', e); }
+        }
+
+        function assignAdminUserActionButtons() {
+            document.getElementById('admin-user-list').querySelectorAll('.btn-edit').forEach(b => b.addEventListener('click', e => enterAdminUserEditMode(e.target.dataset.id)));
+            document.getElementById('admin-user-list').querySelectorAll('.btn-delete').forEach(b => b.addEventListener('click', e => {
+                if (confirm(`¿Eliminar usuario ${e.target.dataset.id}?`)) deleteUser(e.target.dataset.id);
+            }));
+        }
+
+        async function handleAdminUserFormSubmit(event) {
+            event.preventDefault();
+            const userData = {
+                nombreUsuario: document.getElementById('admin-nombreUsuario').value,
+                nombreCompleto: document.getElementById('admin-nombreCompleto').value,
+                email: document.getElementById('admin-email').value,
+                ciudad: document.getElementById('admin-ciudad').value
+            };
+            const method = adminIsEditingUser ? 'PUT' : 'POST';
+            const url = adminIsEditingUser ? `${API.USERS}/${document.getElementById('admin-userId').value}` : API.USERS;
+            try {
+                await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(userData) });
+                exitAdminUserEditMode();
+                loadAdminUserList();
+                loadUserOptions();
+            } catch (e) { console.error('Error en formulario de usuario:', e); }
+        }
+
+        async function deleteUser(userId) {
+            try {
+                await fetch(`${API.USERS}/${userId}`, { method: 'DELETE' });
+                loadAdminUserList();
+                loadUserOptions();
+            } catch (e) { console.error('Error al eliminar usuario:', e); }
+        }
+
+        async function enterAdminUserEditMode(userId) {
+            try {
+                const user = await (await fetch(`${API.USERS}/${userId}`)).json();
+                adminIsEditingUser = true;
+                document.getElementById('admin-user-form-title').textContent = 'Editar Usuario';
+                document.getElementById('admin-userId').value = user.id;
+                document.getElementById('admin-nombreUsuario').value = user.nombreUsuario;
+                document.getElementById('admin-nombreCompleto').value = user.nombreCompleto;
+                document.getElementById('admin-email').value = user.email;
+                document.getElementById('admin-ciudad').value = user.ciudad;
+                const btn = document.getElementById('admin-user-form').querySelector('button[type="submit"]');
+                btn.textContent = 'Actualizar Usuario';
+                btn.style.backgroundColor = 'var(--warning)';
+                document.getElementById('cancel-user-edit').style.display = 'block';
+            } catch (e) { console.error('Error al entrar en modo edición de usuario:', e); }
+        }
+
+        function exitAdminUserEditMode() {
+            adminIsEditingUser = false;
+            document.getElementById('admin-user-form-title').textContent = 'Crear Nuevo Usuario';
+            document.getElementById('admin-user-form').reset();
+            const btn = document.getElementById('admin-user-form').querySelector('button[type="submit"]');
+            btn.textContent = 'Crear Usuario';
+            btn.style.backgroundColor = '';
+            document.getElementById('cancel-user-edit').style.display = 'none';
+        }
+
+        async function loadAdminProductList() {
+            const listEl = document.getElementById('admin-product-list');
+            listEl.innerHTML = `<div class="loading-state">Cargando...</div>`;
+            try {
+                const products = await (await fetch(API.PRODUCTOS)).json();
+                listEl.innerHTML = products.map(p => `<div class="admin-item">
+                    <span>${p.nombre} ($${p.precio})</span>
+                    <div class="admin-item-actions">
+                        <button class="btn btn-edit" data-id="${p.id}">Editar</button>
+                        <button class="btn btn-delete" data-id="${p.id}">Eliminar</button>
+                    </div>
+                </div>`).join('');
+                assignAdminProductActionButtons();
+            } catch (e) { console.error('Error cargando lista de productos:', e); }
+        }
+
+        function assignAdminProductActionButtons() {
+            document.getElementById('admin-product-list').querySelectorAll('.btn-edit').forEach(b => b.addEventListener('click', e => enterAdminProductEditMode(e.target.dataset.id)));
+            document.getElementById('admin-product-list').querySelectorAll('.btn-delete').forEach(b => b.addEventListener('click', e => {
+                if (confirm(`¿Eliminar producto ${e.target.dataset.id}?`)) deleteProduct(e.target.dataset.id);
+            }));
+        }
+
+        async function handleAdminProductFormSubmit(event) {
+            event.preventDefault();
+            const productData = {
+                nombre: document.getElementById('admin-nombreProducto').value,
+                descripcion: document.getElementById('admin-descripcion').value,
+                precio: parseFloat(document.getElementById('admin-precio').value),
+                imageUrl: document.getElementById('admin-imageUrl').value
+            };
+            const method = adminIsEditingProduct ? 'PUT' : 'POST';
+            const url = adminIsEditingProduct ? `${API.PRODUCTOS}/${document.getElementById('admin-productId').value}` : API.PRODUCTOS;
+            try {
+                await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productData) });
+                exitAdminProductEditMode();
+                loadAdminProductList();
+            } catch (e) { console.error('Error en formulario de producto:', e); }
+        }
+
+        async function deleteProduct(productId) {
+            try {
+                await fetch(`${API.PRODUCTOS}/${productId}`, { method: 'DELETE' });
+                loadAdminProductList();
+            } catch (e) { console.error('Error al eliminar producto:', e); }
+        }
+
+        async function enterAdminProductEditMode(productId) {
+            try {
+                const product = await (await fetch(`${API.PRODUCTOS}/${productId}`)).json();
+                adminIsEditingProduct = true;
+                document.getElementById('admin-product-form-title').textContent = 'Editar Producto';
+                document.getElementById('admin-productId').value = product.id;
+                document.getElementById('admin-nombreProducto').value = product.nombre;
+                document.getElementById('admin-descripcion').value = product.descripcion;
+                document.getElementById('admin-precio').value = product.precio;
+                document.getElementById('admin-imageUrl').value = product.imageUrl;
+                const btn = document.getElementById('admin-product-form').querySelector('button[type="submit"]');
+                btn.textContent = 'Actualizar Producto';
+                btn.style.backgroundColor = 'var(--warning)';
+                document.getElementById('cancel-product-edit').style.display = 'block';
+            } catch (e) { console.error('Error al entrar en modo edición de producto:', e); }
+        }
+
+        function exitAdminProductEditMode() {
+            adminIsEditingProduct = false;
+            document.getElementById('admin-product-form-title').textContent = 'Crear Nuevo Producto';
+            document.getElementById('admin-product-form').reset();
+            const btn = document.getElementById('admin-product-form').querySelector('button[type="submit"]');
+            btn.textContent = 'Crear Producto';
+            btn.style.backgroundColor = '';
+            document.getElementById('cancel-product-edit').style.display = 'none';
+        }
+
+        async function openAddOrderModal() {
+            document.getElementById('add-order-modal').classList.remove('hidden');
+            try {
+                const products = await (await fetch(API.PRODUCTOS)).json();
+                productCache = products; // Guardar en caché
+                document.getElementById('product-select').innerHTML = products.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+                updateCalculatedPrice(); // Calcular precio inicial
+            } catch (e) { console.error("Error al cargar productos para el pedido:", e); }
+        }
+
+        function closeAddOrderModal() { document.getElementById('add-order-modal').classList.add('hidden'); document.getElementById('add-order-form').reset(); }
+
+        async function handleAddOrderSubmit(event) {
+            event.preventDefault();
+            const newOrderData = {
+                usuarioId: parseInt(document.getElementById('user-select').value),
+                productoId: parseInt(document.getElementById('product-select').value),
+                cantidad: parseInt(document.getElementById('order-quantity').value)
+            };
+            try {
+                await fetch(API.PEDIDOS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newOrderData) });
+                closeAddOrderModal();
+                loadUserProfile(newOrderData.usuarioId);
+            } catch (e) { console.error("Error al crear pedido:", e); }
+        }
+
+        async function deleteOrder(orderId) {
+            try {
+                await fetch(`${API.PEDIDOS}/${orderId}`, { method: 'DELETE' });
+                loadUserProfile(document.getElementById('user-select').value);
+            } catch (e) { console.error('Error en deleteOrder:', e); }
+        }
+
+        function updateCalculatedPrice() {
+            const selectedProductId = parseInt(document.getElementById('product-select').value);
+            const quantity = parseInt(document.getElementById('order-quantity').value) || 1;
+            const product = productCache.find(p => p.id === selectedProductId);
+            if (product) {
+                const totalPrice = product.precio * quantity;
+                document.getElementById('calculated-price').textContent = `$${totalPrice.toFixed(2)}`;
             }
-        }));
-    }
-
-    // --- Lógica del Modal de Administración de Usuarios ---
-
-    function openAdminModal() {
-        adminModal.classList.remove('hidden');
-        loadAdminUserList();
-    }
-
-    function closeAdminModal() {
-        adminModal.classList.add('hidden');
-        exitAdminEditMode();
-    }
-
-    async function loadAdminUserList() {
-        adminUserList.innerHTML = `<div class="loading-state">Cargando...</div>`;
-        try {
-            const users = await (await fetch(USERS_API)).json();
-            adminUserList.innerHTML = '';
-            users.forEach(user => {
-                const item = document.createElement('div');
-                item.className = 'admin-user-item';
-                item.innerHTML = `
-                    <span>${user.nombreCompleto}</span>
-                    <div class="admin-user-actions">
-                        <button class="btn btn-edit" data-id="${user.id}">Editar</button>
-                        <button class="btn btn-delete" data-id="${user.id}">Eliminar</button>
-                    </div>`;
-                adminUserList.appendChild(item);
-            });
-            assignAdminActionButtons();
-        } catch (error) {
-            console.error('Error cargando lista de admin:', error);
         }
-    }
-
-    function assignAdminActionButtons() {
-        adminUserList.querySelectorAll('.btn-edit').forEach(b => b.addEventListener('click', e => enterAdminEditMode(e.target.dataset.id)));
-        adminUserList.querySelectorAll('.btn-delete').forEach(b => b.addEventListener('click', e => {
-            if (confirm(`¿Seguro que quieres eliminar al usuario con ID ${e.target.dataset.id}?`)) {
-                deleteUser(e.target.dataset.id);
-            }
-        }));
-    }
-
-    async function handleAdminFormSubmit(event) {
-        event.preventDefault();
-        const userData = {
-            nombreUsuario: document.getElementById('admin-nombreUsuario').value,
-            nombreCompleto: document.getElementById('admin-nombreCompleto').value,
-            email: document.getElementById('admin-email').value,
-            ciudad: document.getElementById('admin-ciudad').value
-        };
-        const method = adminIsEditing ? 'PUT' : 'POST';
-        const url = adminIsEditing ? `${USERS_API}/${document.getElementById('admin-userId').value}` : USERS_API;
-        try {
-            await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(userData) });
-            exitAdminEditMode();
-            loadAdminUserList();
-            loadUserOptions();
-        } catch (error) {
-            console.error(`Error al ${adminIsEditing ? 'actualizar' : 'crear'} usuario:`, error);
-        }
-    }
-
-    async function deleteUser(userId) {
-        try {
-            await fetch(`${USERS_API}/${userId}`, { method: 'DELETE' });
-            loadAdminUserList();
-            loadUserOptions();
-        } catch (error) {
-            console.error('Error en deleteUser:', error);
-        }
-    }
-
-    async function enterAdminEditMode(userId) {
-        try {
-            const user = await (await fetch(`${USERS_API}/${userId}`)).json();
-            adminIsEditing = true;
-            adminFormTitle.textContent = 'Editar Usuario';
-            document.getElementById('admin-userId').value = user.id;
-            document.getElementById('admin-nombreUsuario').value = user.nombreUsuario;
-            document.getElementById('admin-nombreCompleto').value = user.nombreCompleto;
-            document.getElementById('admin-email').value = user.email;
-            document.getElementById('admin-ciudad').value = user.ciudad;
-            const submitButton = adminUserForm.querySelector('button[type="submit"]');
-            submitButton.textContent = 'Actualizar Usuario';
-            submitButton.style.backgroundColor = 'var(--warning)';
-            adminModal.querySelector('.btn-cancel-edit').style.display = 'block';
-        } catch (error) {
-            console.error('Error al entrar en modo edición:', error);
-        }
-    }
-
-    function exitAdminEditMode() {
-        adminIsEditing = false;
-        adminFormTitle.textContent = 'Crear Nuevo Usuario';
-        adminUserForm.reset();
-        document.getElementById('admin-userId').value = '';
-        const submitButton = adminUserForm.querySelector('button[type="submit"]');
-        submitButton.textContent = 'Crear Usuario';
-        submitButton.style.backgroundColor = '';
-        adminModal.querySelector('.btn-cancel-edit').style.display = 'none';
-    }
-
-    // --- Lógica del Modal de Añadir Pedido ---
-
-    async function openAddOrderModal() {
-        addOrderModal.classList.remove('hidden');
-        // Llenar el selector de productos
-        try {
-            // NOTA: No tenemos un endpoint para todos los productos, así que lo simulamos
-            // En un caso real, aquí llamaríamos a GET /productos
-            const productos = [
-                { id: 10, nombre: "Laptop Pro X1" },
-                { id: 20, nombre: "Mouse Ergonómico Silencioso" },
-                { id: 30, nombre: "Teclado Mecánico RGB" }
-            ];
-            productSelect.innerHTML = productos.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
-        } catch (error) {
-            console.error("Error al cargar productos:", error);
-        }
-    }
-
-    function closeAddOrderModal() {
-        addOrderModal.classList.add('hidden');
-        addOrderForm.reset();
-    }
-
-    async function handleAddOrderSubmit(event) {
-        event.preventDefault();
-        const nuevoPedido = {
-            usuarioId: parseInt(userSelect.value), // El usuario seleccionado actualmente
-            productoId: parseInt(productSelect.value),
-            cantidad: parseInt(document.getElementById('order-quantity').value),
-            precioTotal: parseFloat(document.getElementById('order-price').value)
-        };
-
-        try {
-            await fetch(PEDIDOS_API, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(nuevoPedido)
-            });
-            closeAddOrderModal();
-            loadUserProfile(nuevoPedido.usuarioId); // Recargar el perfil para ver la nueva compra
-        } catch (error) {
-            console.error("Error al crear pedido:", error);
-        }
-    }
-
-    async function deleteOrder(orderId) {
-        try {
-            await fetch(`${PEDIDOS_API}/${orderId}`, { method: 'DELETE' });
-            loadUserProfile(userSelect.value); // Recargar el perfil para ver los cambios
-        } catch (error) {
-            console.error('Error en deleteOrder:', error);
-        }
-    }
-
-</script>
+    </script>
 </body>
 </html>
