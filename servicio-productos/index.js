@@ -60,19 +60,21 @@ app.get('/productos/:id', (req, res) => {
 
 // [POST] /productos - Crea un nuevo producto
 app.post('/productos', (req, res) => {
-    const maxId = productos.reduce((max, p) => (p.id > max ? p.id : max), 0);
-    
-    const nuevoProducto = {
-        id: maxId + 10, // Incrementamos de 10 en 10 para evitar colisiones
-        nombre: req.body.nombre,
-        descripcion: req.body.descripcion,
-        imageUrl: req.body.imageUrl
-    };
+        const maxId = productos.reduce((max, p) => (p.id > max ? p.id : max), 0);
+        
+        const nuevoProducto = {
+            id: maxId + 10,
+            nombre: req.body.nombre,
+            descripcion: req.body.descripcion,
+            // Convertimos el precio de string (del formulario) a número
+            precio: parseFloat(req.body.precio), // <-- ESTA LÍNEA ES LA CORRECCIÓN
+            imageUrl: req.body.imageUrl
+        };
 
-    productos.push(nuevoProducto);
-    console.log('Producto creado:', nuevoProducto);
-    res.status(201).json(nuevoProducto);
-});
+        productos.push(nuevoProducto);
+        console.log('Producto creado:', nuevoProducto);
+        res.status(201).json(nuevoProducto);
+    });
 
 // [PUT] /productos/:id - Actualiza un producto existente
 app.put('/productos/:id', (req, res) => {
